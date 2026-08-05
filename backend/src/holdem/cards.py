@@ -75,3 +75,36 @@ def parse_cards(text: str) -> list[Card]:
 
 def full_deck() -> list[Card]:
     return [Card(rank, suit) for suit in SUIT_CHARS for rank in range(2, 15)]
+
+
+class Deck:
+    """A deck that deals from the top.
+
+    Pass ``cards`` to get a pre-arranged ("stacked") deck, which is handy for
+    tests and lessons. Otherwise the deck holds all 52 cards, shuffled with
+    ``rng``.
+    """
+
+    def __init__(self, cards: Sequence[Card] | None = None, rng: random.Random | None = None):
+        self._rng = rng or random.Random()
+        if cards is None:
+            self._cards = full_deck()
+            self._rng.shuffle(self._cards)
+        else:
+            if len(set(cards)) != len(cards):
+                raise ValueError("stacked deck contains duplicate cards")
+            self._cards = list(cards)
+
+    def __len__(self) -> int:
+        return len(self._cards)
+
+    def deal(self, count: int = 1) -> list[Card]:
+        if count > len(self._cards):
+            raise ValueError(f"cannot deal {count} cards, only {len(self._cards)} left")
+        dealt, self._cards = self._cards[:count], self._cards[count:]
+        return dealt
+
+    def remove(self, cards: Iterable[Card]) -> None:
+        """Take specific cards out of the deck (e.g. cards already known)."""
+        gone = set(cards)
+        self._cards = [card for card in self._cards if card not in gone]
