@@ -49,3 +49,40 @@ def test_category_order():
     ]
     values = [ev(h) for h in hands]
     assert values == sorted(values)
+
+
+def test_kicker_decides_between_equal_pairs():
+    board = "Kh 9d 5c 3s 2h"
+    assert ev(f"Ks Qd {board}") > ev(f"Kc Jd {board}")
+
+
+def test_board_plays_and_splits():
+    board = "Ah Kh Qd Jc Ts"
+    assert ev(f"2c 3d {board}") == ev(f"4s 5s {board}")
+
+
+def test_wheel_loses_to_six_high_straight():
+    assert ev("Ac 2d 3h 4s 5c") < ev("2d 3h 4s 5c 6d")
+
+
+def test_two_trips_make_a_full_house():
+    value = ev("Kc Kd Ks 7h 7s 7d 2c")
+    assert value.describe() == "Full House, Kings full of Sevens"
+
+
+def test_three_pairs_use_best_kicker():
+    value = ev("Ac Ad Kc Kd 5h 5s Qc")
+    assert value.category is HandCategory.TWO_PAIR
+    assert value.tiebreak == (14, 13, 12)
+
+
+def test_flush_uses_top_five_of_six_suited():
+    value = ev("Ah 9h 7h 5h 3h 2h Kc")
+    assert value.tiebreak == (14, 9, 7, 5, 3)
+
+
+def test_rejects_bad_input():
+    with pytest.raises(ValueError):
+        ev("Ac Kd Qh Js")
+    with pytest.raises(ValueError):
+        ev("Ac Ac Qh Js Td")
