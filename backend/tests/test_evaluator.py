@@ -86,3 +86,13 @@ def test_rejects_bad_input():
         ev("Ac Kd Qh Js")
     with pytest.raises(ValueError):
         ev("Ac Ac Qh Js Td")
+
+
+def test_seven_cards_match_best_of_all_five_card_subsets():
+    rng = random.Random(42)
+    deck = full_deck()
+    for _ in range(500):
+        cards = rng.sample(deck, 7)
+        best = max(evaluate(list(five)) for five in combinations(cards, 5))
+        value = evaluate(cards)
+        assert (value.category, value.tiebreak) == (best.category, best.tiebreak), cards
