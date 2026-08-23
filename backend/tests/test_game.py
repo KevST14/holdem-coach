@@ -82,3 +82,53 @@ def test_short_all_in_raise_does_not_reopen_betting():
     assert not g.legal_actions().can_raise
     g.act(A.CALL)
     assert g.street is Street.FLOP
+
+
+def test_side_pots_are_paid_to_the_right_players():
+    g = three_handed(stacks=(100, 300, 1000))
+    g.start_hand(rigged_deck(g, {0: "As Ah", 1: "Ks Kh", 2: "Qs Qh"}, board="2c 7d 9h Jc 3s"))
+    g.act(A.RAISE, 100)
+    g.act(A.RAISE, 300)
+    g.act(A.CALL)
+    assert not g.in_progress and g.street is Street.SHOWDOWN
+    assert len(g.board) == 5
+    assert [p.stack for p in g.players] == [300, 400, 700]
+    assert [(r.label, r.amount) for r in g.results] == [("the main pot", 300), ("side pot 1", 400)]
+
+
+def test_split_pot_gives_odd_chip_to_first_winner_left_of_button():
+    g = three_handed()
+    g.start_hand(rigged_deck(g, {0: "2c 3d", 1: "4c 5d", 2: "2d 3c"}, board="Ah Kh Qh Jh Th"))
+    g.act(A.CALL)
+    g.act(A.FOLD)
+    g.act(A.CHECK)
+    for _ in range(3):
+        g.act(A.CHECK)
+        g.act(A.CHECK)
+    assert not g.in_progress
+    assert g.results[0].amount == 25
+    assert g.results[0].payouts == {2: 13, 0: 12}
+    assert [p.stack for p in g.players] == [1002, 995, 1003]
+
+
+def test_all_in_for_more_than_caller_has_gets_excess_back():
+    g = heads_up(stacks=(500, 200))
+    g.start_hand()
+    g.act(A.RAISE, 500)
+    assert g.legal_actions().to_call == 190
+    g.act(A.CALL)
+    assert not g.in_progress
+    assert any(e.kind == "uncalled" and e.amount == 300 for e in g.events)
+    assert total_chips(g) == 700
+    assert g.players[0].stack >= 300
+
+
+def test_big_blind_short_all_in():
+    g = heads_up(stacks=(1000, 5))
+    g.start_hand()
+    assert g.players[1].all_in
+    legal = g.legal_actions()
+    assert legal.to_call == 5 and not legal.can_raise
+    g.act(A.CALL)
+    assert not g.in_progress and len(g.board) == 5
+    assert total_chips(g) == 1005
