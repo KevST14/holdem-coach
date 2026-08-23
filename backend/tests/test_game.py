@@ -52,3 +52,33 @@ def test_everyone_folds_and_uncalled_bet_goes_back():
     assert [p.stack for p in g.players] == [1010, 990]
     assert [e.kind for e in g.events][-2:] == ["uncalled", "win"]
     assert g.results[0].hand is None
+
+
+def test_minimum_raise_is_the_size_of_the_last_raise():
+    g = three_handed()
+    g.start_hand()
+    g.act(A.RAISE, 30)  # raises by 20
+    legal = g.legal_actions()
+    assert (legal.to_call, legal.min_raise_to, legal.max_raise_to) == (25, 50, 1000)
+    with pytest.raises(IllegalActionError):
+        g.act(A.RAISE, 40)
+    g.act(A.RAISE, 50)
+    assert g.current_bet == 50
+    assert g.legal_actions().min_raise_to == 70
+
+
+def test_short_all_in_raise_does_not_reopen_betting():
+    g = three_handed(stacks=(1000, 1000, 45))
+    g.start_hand()
+    g.act(A.RAISE, 30)  # Ann
+    g.act(A.CALL)  # Bob
+    legal = g.legal_actions()  # Cat can only go all-in for 45, short of a full raise to 50
+    assert (legal.min_raise_to, legal.max_raise_to) == (45, 45)
+    g.act(A.RAISE, 45)
+    assert g.players[2].all_in
+    legal = g.legal_actions()
+    assert legal.seat == 0 and legal.to_call == 15 and not legal.can_raise
+    g.act(A.CALL)
+    assert not g.legal_actions().can_raise
+    g.act(A.CALL)
+    assert g.street is Street.FLOP
