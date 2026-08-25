@@ -132,3 +132,79 @@ def test_big_blind_short_all_in():
     g.act(A.CALL)
     assert not g.in_progress and len(g.board) == 5
     assert total_chips(g) == 1005
+
+
+def test_illegal_actions_are_rejected():
+    g = heads_up()
+    g.start_hand()
+    with pytest.raises(IllegalActionError):
+        g.act(A.CHECK)  # facing the big blind
+    with pytest.raises(IllegalActionError):
+        g.act(A.BET, 20)  # there is already a bet: it's a raise
+    g.act(A.CALL)
+    with pytest.raises(IllegalActionError):
+        g.act(A.FOLD)  # big blind can check for free
+    with pytest.raises(IllegalActionError):
+        g.act(A.RAISE, 15)  # below the minimum
+    g.act(A.CHECK)
+    with pytest.raises(IllegalActionError):
+        g.act(A.RAISE, 20)  # no bet yet on the flop: it's a bet
+    with pytest.raises(IllegalActionError):
+        g.start_hand()  # hand still running
+
+
+def test_button_moves_and_busted_players_sit_out():
+    g = three_handed(stacks=(100, 1000, 1000))
+    g.start_hand(rigged_deck(g, {0: "7c 2d", 1: "As Ah"}, board="Kc Qd 9h 4s 3c"))
+    g.act(A.RAISE, 100)
+    g.act(A.CALL)
+    g.act(A.FOLD)
+    assert g.players[0].stack == 0
+    assert g.events[-1].kind == "bust"
+
+    g.start_hand()
+    assert not g.players[0].in_hand
+    assert g.button == 1
+    assert (g.sb_seat, g.bb_seat) == (1, 2)  # heads-up now: the dealer posts the small blind
+
+
+def test_game_over_when_one_player_has_all_the_chips():
+    g = heads_up(stacks=(100, 100))
+    g.start_hand(rigged_deck(g, {0: "As Ah", 1: "7c 2d"}, board="Kc Qd 9h 4s 3c"))
+    g.act(A.RAISE, 100)
+    g.act(A.CALL)
+    assert g.is_over
+    with pytest.raises(IllegalActionError):
+        g.start_hand()
+
+
+@pytest.mark.parametrize("seed", range(20))
+def test_random_play_keeps_chips_and_finishes_hands(seed):
+    rng = random.Random(seed)
+    stacks = [rng.choice([50, 200, 1000, 3000]) for _ in range(rng.randint(2, 6))]
+    g = Game([(f"P{i}", s) for i, s in enumerate(stacks)], small_blind=5, big_blind=10, rng=rng)
+    total = sum(stacks)
+    for _ in range(40):
+        if g.is_over:
+            break
+        g.start_hand()
+        for _ in range(500):
+            if not g.in_progress:
+                break
+            legal = g.legal_actions()
+            options = []
+            if legal.can_fold:
+                options.append((A.FOLD, None))
+            if legal.can_check:
+                options.append((A.CHECK, None))
+            if legal.can_call:
+                options.append((A.CALL, None))
+            if legal.can_bet or legal.can_raise:
+                kind = A.BET if legal.can_bet else A.RAISE
+                options.append((kind, rng.randint(legal.min_raise_to, legal.max_raise_to)))
+                options.append((kind, legal.max_raise_to))
+            g.act(*rng.choice(options))
+            assert total_chips(g) == total
+        assert not g.in_progress
+        assert sum(p.stack for p in g.players) == total
+        assert all(p.stack >= 0 for p in g.players)
