@@ -43,3 +43,23 @@ HAND_RANKINGS = [
     RankingLesson("High Card", parse_cards("Ac Jd 9h 7s 4c"),
                   "Nothing else? Your highest card plays. If tied, compare the next highest.", "about 1 in 6"),
 ]
+
+
+HOW_A_HAND_WORKS = [
+    ("The blinds",
+     "Two players to the left of the dealer button post forced bets called the small blind and big blind. "
+     "This puts chips in the pot so there's something to play for."),
+    ("Hole cards",
+     "Everyone gets two private cards. Only you can see yours."),
+    ("Pre-flop betting",
+     "Starting left of the big blind, each player folds, calls the big blind, or raises."),
+    ("The flop",
+     "Three shared cards are dealt face up in the middle. Everyone can use them. Another round of betting follows."),
+    ("The turn",
+     "A fourth shared card, then another betting round."),
+    ("The river",
+     "The fifth and final shared card, then the last betting round."),
+    ("Showdown",
+     "Players still in reveal their cards. Each makes the best five-card hand from their two hole cards plus "
+     "the five shared cards. The best hand wins the pot."),
+]
