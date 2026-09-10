@@ -63,3 +63,28 @@ HOW_A_HAND_WORKS = [
      "Players still in reveal their cards. Each makes the best five-card hand from their two hole cards plus "
      "the five shared cards. The best hand wins the pot."),
 ]
+
+
+GLOSSARY = {
+    "All-in": "Betting every chip you have left. You can't be forced out of the hand after that.",
+    "Big blind": "The larger forced bet, posted by the player two seats left of the dealer.",
+    "Board": "The shared cards in the middle of the table.",
+    "Button": "The dealer marker. It moves one seat left each hand, and the button acts last after the flop.",
+    "Call": "Match the current bet to stay in the hand.",
+    "Check": "Pass without betting. Only allowed when nobody has bet in the current round.",
+    "Draw": "A hand that isn't made yet but could improve, like four cards to a flush.",
+    "Flop": "The first three shared cards.",
+    "Fold": "Give up your hand and any chips you've already put in.",
+    "Hole cards": "Your two private cards.",
+    "Kicker": "A side card that breaks ties between hands of the same type, like two players with a pair of Kings.",
+    "Outs": "Cards left in the deck that would improve your hand to a likely winner.",
+    "Pot": "All the chips bet in the current hand. The winner takes it.",
+    "Pot odds": "The price of a call compared to the size of the pot. If you must call 10 to win 40, "
+                "you need to win at least 20% of the time.",
+    "Raise": "Increase the size of the current bet. Others must match the new amount or fold.",
+    "River": "The fifth and final shared card.",
+    "Showdown": "When the remaining players reveal their cards to see who wins.",
+    "Side pot": "A separate pot for chips that an all-in player couldn't match. Only players who put chips in it can win it.",
+    "Small blind": "The smaller forced bet, posted by the player just left of the dealer.",
+    "Turn": "The fourth shared card.",
+}
