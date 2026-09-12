@@ -75,3 +75,79 @@ def starting_hand_tip(hole: Sequence[Card]) -> str:
     if score >= 7:
         return "A playable hand that can improve on the flop. Worth playing if it's cheap."
     return "A weak starting hand. Most experienced players fold this unless they can see the flop for free."
+
+
+# ---------------------------------------------------------------- made hands and draws
+
+def _straight_completions(cards: Sequence[Card], hole: Sequence[Card]) -> int:
+    """How many different ranks would complete a straight that uses a hole card."""
+    def with_low_ace(ranks: set[int]) -> set[int]:
+        return ranks | {1} if 14 in ranks else ranks
+
+    ranks = {c.rank for c in cards}
+    hole_ranks = with_low_ace({c.rank for c in hole})
+    count = 0
+    for extra in range(2, 15):
+        if extra in ranks:
+            continue
+        candidate = with_low_ace(ranks | {extra})
+        for high in range(14, 4, -1):
+            run = set(range(high - 4, high + 1))
+            if run <= candidate and run & hole_ranks:
+                count += 1
+                break
+    return count
+
+
+def find_draws(hole: Sequence[Card], board: Sequence[Card]) -> list[str]:
+    if not 3 <= len(board) <= 4:
+        return []
+    cards = [*hole, *board]
+    if evaluate(cards).category >= HandCategory.STRAIGHT:
+        return []
+    cards_to_come = 5 - len(board)
+    multiplier = 4 if cards_to_come == 2 else 2
+    draws = []
+    for suit, name in SUIT_SINGULAR.items():
+        suited = [c for c in cards if c.suit == suit]
+        if len(suited) == 4 and any(c.suit == suit for c in hole):
+            draws.append(f"Flush draw: one more {name} makes a flush. 9 cards help you, "
+                         f"roughly {9 * multiplier}% to hit by the river.")
+    completions = _straight_completions(cards, hole)
+    if completions >= 2:
+        draws.append(f"Open-ended straight draw: 8 cards complete your straight, roughly {8 * multiplier}%.")
+    elif completions == 1:
+        draws.append(f"Gutshot straight draw: only 4 cards complete your straight, roughly {4 * multiplier}%.")
+    return draws
+
+
+def describe_hand(hole: Sequence[Card], board: Sequence[Card]) -> HandSummary:
+    if not board:
+        return HandSummary(starting_hand_name(hole), starting_hand_tip(hole))
+
+    value = evaluate([*hole, *board])
+    draws = find_draws(hole, board)
+    board_ranks = sorted((c.rank for c in board), reverse=True)
+
+    if len(board) == 5 and value == evaluate(board):
+        tip = "Your best five cards are all on the board, so everyone still in the hand shares at least this."
+    elif value.category is HandCategory.HIGH_CARD:
+        tip = "You haven't made a pair yet. High-card hands rarely win at showdown."
+    elif value.category is HandCategory.PAIR:
+        pair = value.tiebreak[0]
+        hole_ranks = [c.rank for c in hole]
+        if hole_ranks[0] == hole_ranks[1] and pair > board_ranks[0]:
+            tip = "An overpair: your pocket pair is higher than every card on the board. Usually a good hand."
+        elif pair == board_ranks[0] and pair in hole_ranks:
+            tip = "Top pair: you paired the highest card on the board. Often the best hand against one or two players."
+        elif pair in hole_ranks:
+            tip = "A pair, but not the highest possible. Be careful if someone bets big."
+        else:
+            tip = "The pair is on the board, so everyone has it. Your other cards decide who wins."
+    elif value.category is HandCategory.TWO_PAIR:
+        tip = "Two pair is a strong hand that often wins against one or two opponents."
+    elif value.category is HandCategory.THREE_OF_A_KIND:
+        tip = "Three of a kind is very strong. Betting makes opponents pay to chase you."
+    else:
+        tip = "A monster hand! Bet to build a big pot."
+    return HandSummary(value.describe(), tip, draws)
