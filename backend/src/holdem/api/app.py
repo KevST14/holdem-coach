@@ -36,3 +36,17 @@ def new_game(req: NewGameRequest) -> GameState:
 @app.get("/api/games/{game_id}", response_model=GameState)
 def get_game(game_id: str) -> GameState:
     return game_state(_session(game_id))
+
+
+@app.post("/api/games/{game_id}/actions", response_model=GameState)
+def take_action(game_id: str, req: ActionRequest) -> GameState:
+    session = _session(game_id)
+    game = session.game
+    if not game.in_progress or game.to_act != session.human_seat:
+        raise HTTPException(409, "it's not your turn")
+    try:
+        game.act(req.action, req.amount)
+    except IllegalActionError as e:
+        raise HTTPException(400, str(e)) from None
+    session.run_bots()
+    return game_state(session)
