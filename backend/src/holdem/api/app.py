@@ -50,3 +50,15 @@ def take_action(game_id: str, req: ActionRequest) -> GameState:
         raise HTTPException(400, str(e)) from None
     session.run_bots()
     return game_state(session)
+
+
+@app.post("/api/games/{game_id}/next-hand", response_model=GameState)
+def next_hand(game_id: str) -> GameState:
+    session = _session(game_id)
+    game = session.game
+    if game.in_progress:
+        raise HTTPException(409, "the current hand isn't finished")
+    if game.is_over or game.players[session.human_seat].stack == 0:
+        raise HTTPException(409, "the game is over: start a new one")
+    session.start_next_hand()
+    return game_state(session)
