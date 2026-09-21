@@ -62,3 +62,8 @@ def next_hand(game_id: str) -> GameState:
         raise HTTPException(409, "the game is over: start a new one")
     session.start_next_hand()
     return game_state(session)
+
+
+@app.get("/api/learn")
+def learn() -> dict:
+    return learn_content()
