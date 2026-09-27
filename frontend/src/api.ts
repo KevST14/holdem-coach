@@ -93,3 +93,33 @@ export interface LearnContent {
   steps: { title: string; body: string }[];
   glossary: { term: string; definition: string }[];
 }
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(path, {
+    headers: { "Content-Type": "application/json" },
+    ...init,
+  });
+  if (!res.ok) {
+    let message = `${res.status} ${res.statusText}`;
+    try {
+      const body = await res.json();
+      if (typeof body.detail === "string") message = body.detail;
+    } catch {
+      // keep the status text
+    }
+    throw new Error(message);
+  }
+  return res.json() as Promise<T>;
+}
+
+export const api = {
+  newGame: (settings: NewGameSettings) =>
+    request<GameState>("/api/games", { method: "POST", body: JSON.stringify(settings) }),
+  act: (id: string, action: ActionType, amount?: number) =>
+    request<GameState>(`/api/games/${id}/actions`, {
+      method: "POST",
+      body: JSON.stringify({ action, amount }),
+    }),
+  nextHand: (id: string) => request<GameState>(`/api/games/${id}/next-hand`, { method: "POST" }),
+  learn: () => request<LearnContent>("/api/learn"),
+};
