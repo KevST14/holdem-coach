@@ -123,3 +123,59 @@ input {
   font-size: 0.85rem;
   font-weight: 500;
 }
+
+/* ---------------------------------------------------------------- cards */
+
+.card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--card);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+  font-weight: 700;
+  line-height: 1;
+  flex: none;
+}
+
+.card.red {
+  color: var(--card-red);
+}
+
+.card.black {
+  color: var(--card-black);
+}
+
+.card-sm {
+  width: 34px;
+  height: 48px;
+  font-size: 0.95rem;
+}
+
+.card-md {
+  width: 52px;
+  height: 74px;
+  font-size: 1.35rem;
+}
+
+.card-lg {
+  width: 68px;
+  height: 96px;
+  font-size: 1.7rem;
+}
+
+.card-suit {
+  font-size: 1.1em;
+}
+
+.card-back {
+  background: repeating-linear-gradient(45deg, #8a2424 0 4px, #a83232 4px 8px);
+  border: 2px solid var(--card);
+}
+
+.card-slot {
+  background: transparent;
+  border: 2px dashed rgb(255 255 255 / 0.18);
+  box-shadow: none;
+}
