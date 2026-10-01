@@ -179,3 +179,166 @@ input {
   border: 2px dashed rgb(255 255 255 / 0.18);
   box-shadow: none;
 }
+
+/* ---------------------------------------------------------------- table */
+
+.table-wrap {
+  --seat-half-w: 66px;
+  --seat-half-h: 66px;
+  position: relative;
+  aspect-ratio: 16 / 10;
+  min-height: 420px;
+}
+
+.felt {
+  position: absolute;
+  inset: 13% 9%;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, var(--felt) 0%, var(--felt-dark) 100%);
+  border: 12px solid var(--rail);
+  box-shadow: inset 0 0 40px rgb(0 0 0 / 0.45), 0 10px 30px rgb(0 0 0 / 0.4);
+  display: grid;
+  place-items: center;
+}
+
+.felt-center {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.street {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(255 255 255 / 0.7);
+}
+
+.board {
+  display: flex;
+  gap: 6px;
+}
+
+.pot {
+  background: rgb(0 0 0 / 0.35);
+  border-radius: 999px;
+  padding: 2px 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.opponents {
+  display: contents;
+}
+
+.seat {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 132px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  transition: opacity 200ms ease;
+}
+
+.seat.folded {
+  opacity: 0.45;
+}
+
+.seat-cards {
+  display: flex;
+  gap: 3px;
+  min-height: 48px;
+}
+
+.seat-plate {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 8px;
+  text-align: center;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.seat.you .seat-plate {
+  border-color: var(--blue);
+}
+
+.seat.acting .seat-plate {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(231 181 76 / 0.25);
+}
+
+.seat.winner .seat-plate {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgb(63 166 107 / 0.3);
+}
+
+.seat-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seat-stack {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.seat-status {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-height: 22px;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--muted);
+  vertical-align: 1px;
+}
+
+.badge.dealer {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.tag {
+  font-size: 0.75rem;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.45);
+  white-space: nowrap;
+}
+
+.tag.win {
+  background: var(--green);
+  color: #06140c;
+  font-weight: 700;
+}
+
+.tag.allin {
+  background: var(--danger);
+  color: #1c0704;
+  font-weight: 700;
+}
+
+.chip-bet {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-variant-numeric: tabular-nums;
+}
