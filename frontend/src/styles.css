@@ -180,6 +180,44 @@ input {
   box-shadow: none;
 }
 
+/* ---------------------------------------------------------------- play layout */
+
+.play {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 16px;
+  align-items: start;
+}
+
+.play-main,
+.play-side {
+  display: grid;
+  gap: 16px;
+}
+
+.new-game {
+  max-width: 460px;
+  margin: 24px auto;
+  display: grid;
+  gap: 12px;
+}
+
+.new-game label {
+  display: grid;
+  gap: 6px;
+}
+
+.new-game input:not([type="range"]) {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
 /* ---------------------------------------------------------------- table */
 
 .table-wrap {
