@@ -567,3 +567,87 @@ input[type="range"] {
 .log .mine {
   color: #9cc3f2;
 }
+
+/* ---------------------------------------------------------------- learn */
+
+.learn {
+  display: grid;
+  gap: 16px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.hero {
+  padding: 28px 24px;
+  border-radius: var(--radius);
+  background: radial-gradient(ellipse at top left, var(--felt) 0%, var(--felt-dark) 80%);
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.hero h2 {
+  font-size: 1.5rem;
+}
+
+.hero p {
+  max-width: 62ch;
+}
+
+.steps {
+  margin: 8px 0 0;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 10px;
+}
+
+.rankings {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.rankings li {
+  display: grid;
+  grid-template-columns: 28px auto 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+
+.rank-num {
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+}
+
+.rank-cards {
+  display: flex;
+  gap: 3px;
+}
+
+.search {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-width: 0;
+}
+
+.glossary {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.glossary dt {
+  font-weight: 700;
+}
+
+.glossary dd {
+  margin: 0;
+  color: var(--muted);
+}
