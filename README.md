@@ -1,5 +1,13 @@
 # Hold'em Coach
 
+[![Tests](https://github.com/KevST14/holdem-coach/actions/workflows/tests.yml/badge.svg)](https://github.com/KevST14/holdem-coach/actions/workflows/tests.yml)
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Last commit](https://img.shields.io/github/last-commit/KevST14/holdem-coach)
+
 Learn Texas Hold'em from scratch, then practice against computer opponents with a coach that explains every decision.
 
 - **Learn**: how a hand plays out, hand rankings with examples, and a glossary.
